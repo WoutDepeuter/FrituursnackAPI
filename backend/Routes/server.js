@@ -1,12 +1,12 @@
-const express = require('express');
 require('dotenv').config();
-const sausController = require('.controllers/sausController');
+const express = require('express');
+const sausController = require('../Controllers/sausController'); 
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use('/saus', sausController);
+app.use('/saus', sausController);  
 
 app.get('/', (req, res) => {
     res.send('Hello World!');
