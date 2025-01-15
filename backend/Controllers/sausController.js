@@ -1,48 +1,25 @@
-const dotenv = require('dotenv');
-dotenv.config();
 const express = require('express');
-const mysql = require('mysql');
-const app = express();
-const connection = mysql.createConnection({
+const mysql = require('mysql2/promise');
+
+const router = express.Router();
+
+const dbConfig = {
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME
-});
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    port: process.env.DB_PORT
+};
 
-connection.connect(err => {
-    if (err) throw err;
-    console.log('Connected to the database.');
-
-    const createTableQuery = `
-        CREATE TABLE IF NOT EXISTS saus (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            name VARCHAR(255) NOT NULL
-        )
-    `;
-
-    connection.query(createTableQuery, (err, result) => {
-        if (err) throw err;
-        console.log('Table created or already exists.');
-
-        const insertQuery = `INSERT INTO saus (name) VALUES ('Mexicano')`;
-
-        connection.query(insertQuery, (err, result) => {
-            if (err) throw err;
-            console.log('Mexicano inserted into the table.');
-            connection.end();
-        });
-    });
-});
-
-app.get('/saus', (req, res) => {
-    connection.query('SELECT * FROM saus', (err, rows) => {
-        if (err) throw err;
+router.get('/', async (req, res) => {
+    try {
+        const connection = await mysql.createConnection(dbConfig);
+        const [rows] = await connection.execute('SELECT * FROM saus');
+        await connection.end();
         res.json(rows);
-    });
-}
-
-
-app.listen(3000, () => {
-    console.log('Server is running on port 3000');
+    } catch (error) {
+        res.status(500).json({ error: 'An error occurred while fetching the saus.' });
+    }
 });
+
+module.exports = router;
