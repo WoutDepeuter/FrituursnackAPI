@@ -1,4 +1,4 @@
-require('dotenv').config();
+
 const express = require('express');
 const sausController = require('../Controllers/sausController'); 
 

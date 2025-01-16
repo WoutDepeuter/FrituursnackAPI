@@ -1,51 +1,79 @@
 const express = require('express');
-const mysql = require('mysql2/promise');
-
 const router = express.Router();
+const mysql = require('mysql2/promise');
+const dotenv = require('dotenv');
+const path = require('path');
 
-const dbConfig = {
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_DATABASE,
-    port: process.env.DB_PORT
-};
+dotenv.config();
 
-// Connection pool for better management
-const pool = mysql.createPool(dbConfig);
+const pool = mysql.createPool({
+  host: 'localhost',
+  user: 'root',
+  password: '',
+  database: 'frietapi',
+});
+
+// Add middleware to parse JSON and URL-encoded bodies
+router.use(express.json());
+router.use(express.urlencoded({ extended: true }));
+
+// Serve the form to add a new saus
+router.get('/add', (req, res) => {
+    res.sendFile(path.join(__dirname, '../views/addsaus.html'));
+});
 
 router.get('/', async (req, res) => {
     try {
         const [rows] = await pool.query('SELECT * FROM saus');
         res.json(rows);
     } catch (error) {
+        console.error('Error fetching saus:', error);
         res.status(500).json({ error: 'An error occurred while fetching the saus.' });
     }
 });
 
-router.post('/add', async (req, res) => {
+router.post('/', async (req, res) => {
+    const { name, description } = req.body;
+
+    // Log the request body for debugging
+    console.log('Request body:', req.body);
+
+    if (!name || !description) {
+        return res.status(400).json({ error: 'Name and description are required.' });
+    }
+
     try {
-        const [result] = await pool.execute('INSERT INTO saus (name) VALUES (?)', [req.body.name]);
+        const [result] = await pool.execute('INSERT INTO saus (name, description) VALUES (?, ?)', [name, description]);
         res.json({ id: result.insertId });
     } catch (error) {
+        console.error('Error adding saus:', error);
         res.status(500).json({ error: 'An error occurred while adding the saus.' });
     }
 });
 
-router.delete('/delete', async (req, res) => {
+router.delete('/:id', async (req, res) => {
     try {
-        const [result] = await pool.execute('DELETE FROM saus WHERE id = ?', [req.body.id]);
-        res.json({ id: req.body.id });
+        const [result] = await pool.execute('DELETE FROM saus WHERE id = ?', [req.params.id]);
+        res.json({ id: req.params.id });
     } catch (error) {
+        console.error('Error deleting saus:', error);
         res.status(500).json({ error: 'An error occurred while deleting the saus.' });
     }
 });
 
-router.put('/update', async (req, res) => {
+router.put('/:id', async (req, res) => {
+    const { name, description } = req.body;
+
+    // Check if name or description are undefined
+    if (!name || !description) {
+        return res.status(400).json({ error: 'Name and description are required.' });
+    }
+
     try {
-        const [result] = await pool.execute('UPDATE saus SET name = ? WHERE id = ?', [req.body.name, req.body.id]);
-        res.json({ id: req.body.id });
+        const [result] = await pool.execute('UPDATE saus SET name = ?, description = ? WHERE id = ?', [name, description, req.params.id]);
+        res.json({ id: req.params.id });
     } catch (error) {
+        console.error('Error updating saus:', error);
         res.status(500).json({ error: 'An error occurred while updating the saus.' });
     }
 });
