@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Saus</title>
+    <title>Add Snack</title>
     <style>
         body {
             display: flex;
@@ -62,38 +62,14 @@
     </style>
 </head>
 <body>
-    
-    <form id="editSausForm" action="/saus/update" method="post">
-        <h1>Edit Saus</h1>
-        <input type="hidden" id="sausId" name="id">
-        <label for="sausName">Saus Name:</label>
-        <input type="text" id="sausName" name="name" required>
-        <label for="sausDescription">Description:</label>
-        <textarea id="sausDescription" name="description" required></textarea>
-        <button type="submit">Update Saus</button>
-    </form>
-
-    <script>
-        // Fetch the saus details and populate the form
-        async function fetchSausDetails(id) {
-            try {
-                const response = await fetch(`/saus/${id}`);
-                const saus = await response.json();
-                document.getElementById('sausId').value = saus.id;
-                document.getElementById('sausName').value = saus.name;
-                document.getElementById('sausDescription').value = saus.description;
-            } catch (error) {
-                console.error('Error fetching saus details:', error);
-                alert('An error occurred while fetching the saus details.');
-            }
-        }
-
-        // Get the saus ID from the URL query parameters
-        const urlParams = new URLSearchParams(window.location.search);
-        const sausId = urlParams.get('id');
-        if (sausId) {
-            fetchSausDetails(sausId);
-        }
-    </script>
+    <!-- Remove the form for adding snacks -->
+    <!-- <form id="addSnackForm" action="/snack/add" method="post">
+        <h1>Add Snack</h1>
+        <label for="snackName">Snack Name:</label>
+        <input type="text" id="snackName" name="name" required>
+        <label for="snackDescription">Description:</label>
+        <textarea id="snackDescription" name="description" required></textarea>
+        <button type="submit">Add Snack</button>
+    </form> -->
 </body>
 </html>

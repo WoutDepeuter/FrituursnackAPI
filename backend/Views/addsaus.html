@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add a Saus and Snack</title>
+    <title>Add Saus</title>
     <style>
         body {
             display: flex;
@@ -22,7 +22,7 @@
             width: 300px;
             margin-bottom: 20px;
         }
-        h1, h2 {
+        h1 {
             text-align: center;
         }
         label {
@@ -76,21 +76,6 @@
         <ul id="sausListItems"></ul>
     </div>
 
-    <!-- Snack Form -->
-    <form id="snackForm" action="/snack" method="post">
-        <h1>Add a Snack</h1>
-        <label for="snackName">Snack Name:</label>
-        <input type="text" id="snackName" name="name" required>
-        <label for="snackDescription">Description:</label>
-        <textarea id="snackDescription" name="description" required></textarea>
-        <button type="submit">Add Snack</button>
-        <button type="button" id="showSnackButton">Show All Snacks</button>
-    </form>
-    <div id="snackList" style="display:none;">
-        <h2>All Snacks</h2>
-        <ul id="snackListItems"></ul>
-    </div>
-
     <script>
         async function fetchAndDisplay(endpoint, listId, listItemsId) {
             try {
@@ -112,10 +97,6 @@
 
         document.getElementById('showSausButton').addEventListener('click', () => {
             fetchAndDisplay('/saus', 'sausList', 'sausListItems');
-        });
-
-        document.getElementById('showSnackButton').addEventListener('click', () => {
-            fetchAndDisplay('/snack', 'snackList', 'snackListItems');
         });
     </script>
 </body>
