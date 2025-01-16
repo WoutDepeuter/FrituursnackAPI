@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List Saus</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            text-align: center;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background-color: #f0f0f0;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        button {
+            background-color: #d9534f;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        button:hover {
+            background-color: #c9302c;
+        }
+    </style>
+</head>
+<body>
+    <h1>All Saus</h1>
+    <ul id="sausListItems"></ul>
+
+    <script>
+        async function fetchAndDisplay() {
+            try {
+                const response = await fetch('/saus');
+                const sausList = await response.json();
+                const listItems = document.getElementById('sausListItems');
+                listItems.innerHTML = '';
+
+                sausList.forEach(saus => {
+                    const li = document.createElement('li');
+                    li.textContent = `${saus.name}: ${saus.description || 'No description available'}`;
+
+                    // Add delete button for each saus item
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = 'Delete';
+                    deleteButton.onclick = async () => {
+                        const confirmDelete = confirm('Are you sure you want to delete this Saus?');
+                        if (confirmDelete) {
+                            try {
+                                const response = await fetch(`/saus/${saus.id}`, {
+                                    method: 'DELETE',
+                                });
+
+                                if (response.ok) {
+                                    alert('Saus deleted!');
+                                    li.remove(); // Remove the deleted item from the list
+                                } else {
+                                    alert('Error deleting saus');
+                                }
+                            } catch (error) {
+                                console.error('Error deleting saus:', error);
+                                alert('An error occurred while deleting the saus.');
+                            }
+                        }
+                    };
+
+                    li.appendChild(deleteButton);
+                    listItems.appendChild(li);
+                });
+            } catch (error) {
+                console.error('Error fetching saus:', error);
+                alert('An error occurred while fetching the saus.');
+            }
+        }
+
+      
+        fetchAndDisplay();
+    </script>
+</body>
+</html>
