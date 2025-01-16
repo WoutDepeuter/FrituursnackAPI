@@ -22,6 +22,11 @@ router.get('/add', (req, res) => {
     res.sendFile(path.join(__dirname, '../views/addsaus.html'));
 });
 
+// Serve the list of all saus
+router.get('/list', (req, res) => {
+    res.sendFile(path.join(__dirname, '../views/listsaus.html'));
+});
+
 router.get('/', async (req, res) => {
     try {
         const [rows] = await pool.query('SELECT * FROM saus');

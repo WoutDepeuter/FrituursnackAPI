@@ -1,21 +1,122 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add a Saus</title>
+    <title>Add a Saus and Snack</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+        }
+        form {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            margin-bottom: 20px;
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        ul li {
+            padding: 5px;
+            background-color: #f0f0f0;
+            border-bottom: 1px solid #ddd;
+        }
+    </style>
 </head>
 <body>
-    <h1>Add a Saus</h1>
+    <!-- Saus Form -->
     <form id="sausForm" action="/saus" method="post">
+        <h1>Add a Saus</h1>
         <label for="sausName">Saus Name:</label>
         <input type="text" id="sausName" name="name" required>
-        <br>
         <label for="sausDescription">Description:</label>
         <textarea id="sausDescription" name="description" required></textarea>
-        <br>
         <button type="submit">Add Saus</button>
+        <button type="button" id="showSausButton">Show All Saus</button>
     </form>
+    <div id="sausList" style="display:none;">
+        <h2>All Saus</h2>
+        <ul id="sausListItems"></ul>
+    </div>
+
+    <!-- Snack Form -->
+    <form id="snackForm" action="/snack" method="post">
+        <h1>Add a Snack</h1>
+        <label for="snackName">Snack Name:</label>
+        <input type="text" id="snackName" name="name" required>
+        <label for="snackDescription">Description:</label>
+        <textarea id="snackDescription" name="description" required></textarea>
+        <button type="submit">Add Snack</button>
+        <button type="button" id="showSnackButton">Show All Snacks</button>
+    </form>
+    <div id="snackList" style="display:none;">
+        <h2>All Snacks</h2>
+        <ul id="snackListItems"></ul>
+    </div>
+
+    <script>
+        async function fetchAndDisplay(endpoint, listId, listItemsId) {
+            try {
+                const response = await fetch(endpoint);
+                const list = await response.json();
+                const listItems = document.getElementById(listItemsId);
+                listItems.innerHTML = '';
+                list.forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = `${item.name}: ${item.description || 'No description available'}`;
+                    listItems.appendChild(li);
+                });
+                document.getElementById(listId).style.display = 'block';
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                alert('An error occurred while fetching the data.');
+            }
+        }
+
+        document.getElementById('showSausButton').addEventListener('click', () => {
+            fetchAndDisplay('/saus', 'sausList', 'sausListItems');
+        });
+
+        document.getElementById('showSnackButton').addEventListener('click', () => {
+            fetchAndDisplay('/snack', 'snackList', 'snackListItems');
+        });
+    </script>
 </body>
 </html>

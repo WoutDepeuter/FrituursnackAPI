@@ -20,13 +20,13 @@ router.get('/', async (req, res) => {
         const [rows] = await pool.query('SELECT * FROM snack');
         res.json(rows);
     } catch (error) {
-        res.status(500).json({ error: 'An error occurred while fetching the saus.' });
+        res.status(500).json({ error: 'An error occurred while fetching the snacks.' });
     }
 });
 
 router.post('/add', async (req, res) => {
     try {
-        const [result] = await pool.execute('INSERT INTO snack (name) VALUES (?)', [req.body.name]);
+        const [result] = await pool.execute('INSERT INTO snack (name, description) VALUES (?, ?)', [req.body.name, req.body.description]);
         res.json({ id: result.insertId });
     } catch (error) {
         res.status(500).json({ error: 'An error occurred while adding the snack.' });
